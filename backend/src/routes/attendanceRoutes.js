@@ -1,10 +1,9 @@
 import express from 'express';
+import { scanStudent } from '../contollers/attendanceController.js';
 
 const router = express.Router();
 
-router.post("/scan", (req, res) => {
-  res.json({ message: "Scan attendance route hit" });
-});
+router.post("/scan", scanStudent);
 router.get("/course/:courseId", (req, res) => {
   res.json({ message: `Attendance for course ${req.params.courseId}` });
 });

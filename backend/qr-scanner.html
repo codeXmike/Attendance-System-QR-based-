@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+        .container { width: 100%; max-width: 500px; text-align: center; }
+        h1 { margin-bottom: 20px; font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .scanner-container {
+            position: relative; width: 100%; margin: 20px 0; border-radius: 15px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        #qr-video { width: 100%; height: 300px; object-fit: cover; border-radius: 15px; }
+        .scan-line {
+            position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: #00ff00; animation: scan 2s infinite linear;
+            box-shadow: 0 0 20px #00ff00;
+        }
+        @keyframes scan {
+            0% { top: 0; } 50% { top: calc(100% - 4px); } 100% { top: 0; }
+        }
+        .controls { margin: 20px 0; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        button {
+            padding: 12px 24px; border: none; border-radius: 25px; background: rgba(255,255,255,0.2);
+            color: white; font-size: 1rem; cursor: pointer; backdrop-filter: blur(10px);
+            transition: all 0.3s ease; min-width: 120px;
+        }
+        button:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+        #start-btn { background: #4CAF50; }
+        #stop-btn { background: #f44336; }
+        #test-btn { background: #FF9800; }
+        .result {
+            margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.1);
+            border-radius: 10px; backdrop-filter: blur(10px); width: 100%;
+        }
+        #result-text { font-size: 1.1rem; word-break: break-word; margin: 10px 0; }
+        .status { margin-top: 10px; font-size: 0.9rem; opacity: 0.8; }
+        .loading { display: none; margin-top: 10px; text-align: center; }
+        .spinner {
+            width: 20px; height: 20px; border: 2px solid #fff; border-top: 2px solid transparent;
+            border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .camera-permission { text-align: center; padding: 20px; display: none; }
+        .permission-btn { background: #2196F3; }
+        .server-info { margin-top: 20px; font-size: 0.8rem; opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 QR Code Scanner</h1>
+        <div class="server-info">Server: <span id="server-url">Loading...</span></div>
+        
+        <div class="scanner-container" id="scanner-container">
+            <video id="qr-video" playsinline></video>
+            <div class="scan-line"></div>
+        </div>
+
+        <div class="controls">
+            <button id="start-btn">Start Scanner</button>
+            <button id="stop-btn" disabled>Stop Scanner</button>
+            <button id="test-btn">Test Input</button>
+        </div>
+
+        <div class="result">
+            <h3>Scan Result:</h3>
+            <div id="result-text">No QR code scanned yet</div>
+            <div class="status" id="status">Ready to scan</div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div>Sending to server...</div>
+            </div>
+        </div>
+
+        <div class="camera-permission" id="camera-permission">
+            <p>Camera access is required to scan QR codes</p>
+            <button class="permission-btn">Grant Camera Access</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    
+    <script>
+        const video = document.getElementById('qr-video');
+        const resultText = document.getElementById('result-text');
+        const statusText = document.getElementById('status');
+        const loading = document.getElementById('loading');
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const testBtn = document.getElementById('test-btn');
+        const cameraPermission = document.getElementById('camera-permission');
+        const permissionBtn = cameraPermission.querySelector('.permission-btn');
+        const serverUrl = document.getElementById('server-url');
+
+        let videoStream = null;
+        let scanning = false;
+        const SERVER_BASE = window.location.origin;
+
+        serverUrl.textContent = SERVER_BASE;
+
+        // Event listeners
+        startBtn.addEventListener('click', startScanner);
+        stopBtn.addEventListener('click', stopScanner);
+        testBtn.addEventListener('click', manualInput);
+        permissionBtn.addEventListener('click', requestCameraPermission);
+
+        async function checkCameraPermission() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                stream.getTracks().forEach(track => track.stop());
+                cameraPermission.style.display = 'none';
+                return true;
+            } catch (error) {
+                cameraPermission.style.display = 'block';
+                return false;
+            }
+        }
+
+        async function requestCameraPermission() {
+            try {
+                const hasPermission = await checkCameraPermission();
+                if (hasPermission) {
+                    cameraPermission.style.display = 'none';
+                    startScanner();
+                }
+            } catch (error) {
+                statusText.textContent = 'Error accessing camera: ' + error.message;
+            }
+        }
+
+        async function startScanner() {
+            if (scanning) return;
+
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" }
+                });
+                
+                video.srcObject = videoStream;
+                video.setAttribute("playsinline", true);
+                await video.play();
+                
+                scanning = true;
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                statusText.textContent = 'Scanner started. Point camera at QR code.';
+                statusText.style.color = 'white';
+                resultText.textContent = 'Scanning...';
+                
+                scanFrame();
+                
+            } catch (error) {
+                statusText.textContent = 'Error accessing camera: ' + error.message;
+                statusText.style.color = '#ff6b6b';
+                cameraPermission.style.display = 'block';
+            }
+        }
+
+        function stopScanner() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+            
+            scanning = false;
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            statusText.textContent = 'Scanner stopped';
+            statusText.style.color = 'white';
+            resultText.textContent = 'No QR code scanned yet';
+        }
+
+        function scanFrame() {
+            if (!scanning) return;
+
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                
+                if (code) {
+                    statusText.textContent = '✅ QR code detected!';
+                    statusText.style.color = '#4CAF50';
+                    resultText.textContent = code.data;
+                    stopScanner();
+                    sendToBackend(code.data);
+                }
+            }
+            
+            if (scanning) {
+                requestAnimationFrame(scanFrame);
+            }
+        }
+
+        async function sendToBackend(data) {
+            loading.style.display = 'block';
+            statusText.textContent = 'Sending data to server...';
+
+            try {
+                const response = await fetch("http://localhost:3000/api/attendance/scan", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        payload: JSON.parse(data),
+                        timestamp: new Date().toISOString(),
+                        device: navigator.userAgent 
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    statusText.textContent = '✅ Data sent successfully!';
+                    statusText.style.color = '#4CAF50';
+                    resultText.textContent = `Data: ${data} | Server: ${result.serverTime}`;
+                    console.log('Server response:', result);
+                } else {
+                    throw new Error(result.error || `Server error: ${response.status}`);
+                }
+            } catch (error) {
+                statusText.textContent = '❌ Error: ' + error.message;
+                statusText.style.color = '#f44336';
+                console.error('Error:', error);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function manualInput() {
+            const data = prompt('Enter test data (e.g., U12345678):');
+            if (data) {
+                resultText.textContent = data;
+                statusText.textContent = 'Manual input received';
+                statusText.style.color = '#FF9800';
+                sendToBackend(data);
+            }
+        }
+
+        // Initialize
+        checkCameraPermission();
+
+        // Add keyboard shortcut for testing
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 't' || e.key === 'T') {
+                manualInput();
+            }
+        });
+    </script>
+</body>
+</html>

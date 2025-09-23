@@ -6,8 +6,12 @@ import sessionRoutes from './routes/sessionRoutes.js';
 import studentsRoutes from './routes/studentsRoutes.js';
 import reportsAnalyticsRoutes from './routes/reportsAnalyticsRoutes.js';
 import utilitiesRoutes from './routes/utilitiesRoutes.js';
+import cors from 'cors';
 
 const app = express();
+// allowedOrigins = ['http://localhost:3002', 'http://localhost:3001']
+
+app.use(cors());
 
 app.use(express.json());
 app.use('/api/attendance', attendanceRoutes);
