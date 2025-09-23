@@ -1,15 +1,23 @@
 // src/models/AttendanceRecord.js
 import mongoose from "mongoose";
 
-const attendanceSchema = new mongoose.Schema({
+const attendanceRecordSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
-  student_id: { type: String, required: true },
-  event_id: { type: String, required: true },
-  status: { type: String, enum: ["Present", "Absent"], required: true },
-  recorded_at: { type: Date, default: Date.now },
-  recorded_by: { type: String },
-  scan_method: { type: String },
-  metadata: { type: Object, default: {} }
+
+  session_type: { type: String, enum: ["Lecture", "Event", "Hostel"], required: true },
+  session_ref: { type: mongoose.Schema.Types.ObjectId, required: true }, // Course/Event/Hostel
+  session_id: { type: mongoose.Schema.Types.ObjectId, ref: "AttendanceSession", required: true },
+
+  lecturer_id: { type: mongoose.Schema.Types.ObjectId, ref: "Lecturer" }, // only for lectures
+  started_at: { type: Date, required: true },
+  ended_at: { type: Date },
+
+  status: { type: String, enum: ["in-progress", "submitted"], default: "in-progress" },
+
+  // optional summary fields
+  total_scans: { type: Number, default: 0 },
+  total_present: { type: Number, default: 0 },
+  total_duplicates: { type: Number, default: 0 }
 });
 
-export default mongoose.model("AttendanceRecord", attendanceSchema);
+export default mongoose.model("AttendanceRecord", attendanceRecordSchema);

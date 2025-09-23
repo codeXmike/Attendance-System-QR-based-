@@ -3,7 +3,11 @@ import Students from "../models/Students.js";
 export const createStudent = async(data) => {
     return await Students.create(data);
 };
-
+export const changePassword = async(id, password) => {
+    if (!id || !password) throw new Error("Incomplete data");
+    const student = await Students.findByIdAndUpdate({id}, password)
+    
+}
 export const getAllStudents = async() => {
     return await Students.find({});
 };
