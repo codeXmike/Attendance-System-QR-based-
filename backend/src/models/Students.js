@@ -8,7 +8,8 @@ const studentSchema = new mongoose.Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   phone: { type: String },
-  department_id: { type: String, required: true },
+  department_id: { type: mongoose.Schema.Types.ObjectId, ref: "Department", required: true },
+  class_id: { type: mongoose.Schema.Types.ObjectId, ref: "Class" },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date },
   status: { type: String, default: "active" }

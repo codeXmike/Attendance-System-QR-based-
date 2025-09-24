@@ -2,13 +2,10 @@
 import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  code: { type: String, required: true },
-  title: { type: String, required: true },
-  description: { type: String },
-  department_id: { type: String, required: true },
-  credits: { type: Number, default: 3 },
-  semester: { type: String },
+  course_code: { type: String, required: true },
+  name: { type: String, required: true },
+  department_id: { type: mongoose.Schema.Types.ObjectId, ref: "Department", required: true },
+  class_id: { type: mongoose.Schema.Types.ObjectId, ref: "Class" }, // optional
   created_at: { type: Date, default: Date.now }
 });
 

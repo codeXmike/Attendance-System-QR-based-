@@ -14,13 +14,15 @@ const lecturerSchema = new mongoose.Schema({
       session_time:{type: String, required:false}
     }
   ],
-  courses:[
-    {
-      course_id:{ type:String, required: true},
-      course_name:{ type:String, required: true},
-      lecture_hall:{type: String, required:false}
-    }
-  ],
+  courses: [
+  {
+    course_id: { type: String, required: true },
+    course_name: { type: String, required: true },
+    lecture_hall: { type: String },
+    day_of_week: { type: String, enum: ["Mon","Tue","Wed","Thu","Fri"] },
+    
+  }
+],
   created_at: { type: Date, default: Date.now }
 });
 
