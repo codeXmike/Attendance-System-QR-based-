@@ -1,13 +1,13 @@
 import express from 'express';
+import { createStudent } from '../contollers/studentController.js';
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
   res.json({ message: 'Get all students' });
 });
-router.post('/', (req, res) => {
-  res.json({ message: 'Create a student' });
-});
+router.post('/', createStudent);
+
 router.get('/:id', (req, res) => {
   res.json({ message: `Get student ${req.params.id}` });
 });
