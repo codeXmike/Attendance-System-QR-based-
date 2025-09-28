@@ -2,23 +2,22 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useEffect } from "react";
 
-import LecturerLogin from "../pages/lecturers/Login";
+import Login from "../pages/Login";
 import LecturerDashboard from "../pages/lecturers/Dashboard";
 import StudentDashboard from "../pages/students/Dashboard";
-import StudentLogin from "../pages/students/Login";
 
 const router = createBrowserRouter([
   {
-    path: "/lecturer/login",
-    element: <LecturerLogin />,
+    path: "/",
+    element: <Login />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
   {
     path: "/lecturer/dashboard",
     element: <LecturerDashboard />,
-  },
-  {
-    path: "/student/login",
-    element: <StudentLogin />,
   },
   {
     path: "/student/dashboard",

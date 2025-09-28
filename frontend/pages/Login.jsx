@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import "./login.css";
 
 
-function LecturerLogin() {
+function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -17,11 +17,11 @@ function LecturerLogin() {
     return (
         <div className="login-wrapper">
             <div className="login-container">
-                <h2>Lecturer Login</h2>
+                <h2>Login</h2>
                 <form onSubmit={handleSubmit} autoComplete="off">
                     <input   
                         type="email"
-                        placeholder="Email"
+                        placeholder="Email/Matric No."
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         required
@@ -35,11 +35,10 @@ function LecturerLogin() {
                     />
                     <button type="submit">Login</button>
                 </form>
-                <p style={{ margin: '16px 0 4px' }}><a href="#">Forgot password?</a></p>
-                <p style={{ margin: 0 }}>Don't have an account? <a href="#">Sign up</a></p>
+                <p className="bottom-text" style={{ margin: '16px 0 4px' }}><a href="#">Forgot password?</a></p>
             </div>
         </div>
     );
 }
 
-export default LecturerLogin;
+export default Login;
