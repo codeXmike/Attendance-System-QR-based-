@@ -3,9 +3,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useEffect } from "react";
 
 import Login from "../pages/Login";
+import AdminDashboard from "../pages/admins/AdminDashboard/AdminDashboard";
 import LecturerDashboard from "../pages/lecturers/Dashboard";
+import SpecialAttendace from "../pages/admins/super/SpecialAttendance";
 import StudentDashboard from "../pages/students/Dashboard";
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -14,6 +15,14 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/admin/dashboard",
+    element: <AdminDashboard />,
+  },
+  {
+    path: "/admin/special",
+    element: <SpecialAttendace />,
   },
   {
     path: "/lecturer/dashboard",

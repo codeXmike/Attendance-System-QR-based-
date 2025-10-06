@@ -15,7 +15,8 @@ function Login() {
     };
 
     return (
-        <div className="login-wrapper">
+        <div className="main">
+            <div className="login-wrapper">
             <div className="login-container">
                 <h2>Login</h2>
                 <form onSubmit={handleSubmit} autoComplete="off">
@@ -38,6 +39,8 @@ function Login() {
                 <p className="bottom-text" style={{ margin: '16px 0 4px' }}><a href="#">Forgot password?</a></p>
             </div>
         </div>
+        </div>
+        
     );
 }
 
