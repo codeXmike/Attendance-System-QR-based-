@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useEffect } from "react";
 
 import Login from "../pages/Login";
-import AdminDashboard from "../pages/admins/AdminDashboard/AdminDashboard";
+import AdminDashboard from "../pages/admins/AdminDasboard";
 import LecturerDashboard from "../pages/lecturers/Dashboard";
 import SpecialAttendace from "../pages/admins/super/SpecialAttendance";
 import StudentDashboard from "../pages/students/Dashboard";
