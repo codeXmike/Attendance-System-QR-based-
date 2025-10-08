@@ -23,7 +23,7 @@ const AdminDashboard = () => {
     }
     loggedAdmin.role
   return (
-    <div className=' w-full bg-[#0f1322] grid grid-cols-[30%_70%]'>
+    <div className=' w-full bg-[#0f1322] grid grid-cols-[25%_75%]'>
         <Sidebar Title={roleDict[loggedAdmin.role].title} distribution={roleDict[loggedAdmin.role].distribution} faculties={roleDict[loggedAdmin.role].faculties}/>
         <Layout data={roleDict[loggedAdmin.role].data} weeklyDistribution={roleDict[loggedAdmin.role].weeklyDistribution} distribution={roleDict[loggedAdmin.role].faculties}/>
     </div>

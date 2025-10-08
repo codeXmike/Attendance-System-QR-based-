@@ -1,7 +1,9 @@
 import react from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function SpecialAttendace() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     eventName: "",
     date: "",
@@ -112,6 +114,7 @@ function SpecialAttendace() {
                 Cancel
               </button>
               <button
+              onClick={()=>navigate('/attendance/scan')}
                 type="submit"
                 className="px-5 py-2 text-white font-semibold rounded-md bg-gradient-to-r from-blue-400 to-blue-800 hover:opacity-90 transition"
               >

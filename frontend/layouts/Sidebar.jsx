@@ -3,7 +3,6 @@ import { FaHome, FaClipboardList, FaChartLine, FaHandPointRight  } from "react-i
 import { FaChevronUp, FaChevronDown,  } from "react-icons/fa6";
 import { PiStudentBold } from "react-icons/pi";
 import { MdEventAvailable } from "react-icons/md";
-import "./sidebar.css"
 import { useNavigate } from "react-router-dom";
 function Sidebar({Title, faculties, distribution}) {
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -22,14 +21,15 @@ function Sidebar({Title, faculties, distribution}) {
          {Title}
         </div>
       </div>
-    <div>
-      <button onClick={() => navigate('/')} className="flex w-full space-x-2 bg-white active:bg-gray-200 focus:bg-gray-400 text-black px-3 py-2 rounded-lg">
+    <div className="h-[70vh] flex flex-col justify-around pt-[20px]">
+      <button onClick={() => navigate('/')} className="flex w-full space-x-2 bg-white active:bg-gray-200 focus:bg-gray-400 text-black px-3 py-2 rounded-lg mt-auto">
         <FaHome size={25} className="fill-black" />
         <span className="font-bold text-xl ml-4">Dashboard</span>
       </button>
 
     
-      {distribution !== 'Never' && (<div>
+      {distribution !== 'Never' && (
+        <div className="mt-auto">
         <button
           onClick={() => toggleDropdown("faculties")}
           className="flex items-center justify-between w-full px-2 py-2 hover:bg-gray-700 rounded-lg"
@@ -50,7 +50,7 @@ function Sidebar({Title, faculties, distribution}) {
       </div>)}
 
       
-      <div>
+      <div className="mt-auto">
         <button
           onClick={() => toggleDropdown("attendance")}
           className="flex items-center justify-between w-full px-2 py-2 hover:bg-gray-700 rounded-lg"
@@ -64,13 +64,13 @@ function Sidebar({Title, faculties, distribution}) {
         {openDropdown === "attendance" && (
           <div className="ml-20 pl-4 mt-1 space-y-1 max-h-[60px] overflow-y-auto custom-scroll  border-l-4 rounded-bl-lg">
             <button className="block hover:bg-gray-700 rounded-lg px-2 hover:text-cyan-300">Attendance Records</button>
-            <button className="block hover:bg-gray-700 rounded-lg px-2 hover:text-cyan-300">Take Attendance</button>
+            <button className="block hover:bg-gray-700 rounded-lg px-2 hover:text-cyan-300" onClick={()=>navigate('/admin/special')}>Take Attendance</button>
           </div>
         )}
       </div>
 
       
-      <div>
+      <div className="mt-auto">
         <button
           onClick={() => toggleDropdown("students")}
           className="flex items-center justify-between w-full px-2 py-2 hover:bg-gray-700 rounded-lg"
@@ -90,13 +90,13 @@ function Sidebar({Title, faculties, distribution}) {
       </div>
 
       
-      <button className="flex w-full space-x-2 px-2 py-2 hover:bg-gray-700 rounded-lg">
+      <button className="flex w-full space-x-2 px-2 py-2 hover:bg-gray-700 rounded-lg mt-auto">
         <FaChartLine size={25} className="text-blue-400"/>
         <span className="font-semibold text-xl ml-5">Analytics</span>
       </button>
 
       
-      <button className="flex w-full space-x-2 px-2 py-2 hover:bg-gray-700 rounded-lg">
+      <button className="flex w-full space-x-2 px-2 py-2 hover:bg-gray-700 rounded-lg mt-auto">
         <MdEventAvailable size={25} className="text-blue-400"  />
         <span className="font-semibold text-xl ml-5">Events</span>
       </button>

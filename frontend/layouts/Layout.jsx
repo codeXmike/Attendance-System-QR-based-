@@ -1,21 +1,22 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUsers } from "react-icons/fa";
 import { FaCircleCheck } from "react-icons/fa6";
 import { MdQrCodeScanner, MdOutlineAccessTimeFilled, MdEventAvailable } from "react-icons/md";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell
+  PieChart, Pie, Cell, Sector
 } from "recharts";
 
 const Layout = ({ data, weeklyDistribution, distribution }) => {
   const navigate = useNavigate();
-  const COLORS = ["orange", "cyan", "blue", "red", "yellow", "green"];
+  const [activeIndex, setActiveIndex] = useState(null);
+  const COLORS = ["#f7ff8e", "cyan",  "red", "yellow", "blue", "green"];
 
   return (
     <main className="min-h-screen flex-1 w-full bg-[#0f1322] text-white p-6">
       {/* HEADER */}
-      <header className="p-4 flex justify-between rounded-xl items-center mb-6">
+      <header className="p-10 bg-[#1A1F2F] opacity-80 flex justify-between rounded-xl items-center mb-6">
         <h1 className="text-3xl font-semibold">Overview</h1>
         <div className="text-sm text-gray-400 text-end">
           Attendance Rate:{" "}
@@ -26,19 +27,19 @@ const Layout = ({ data, weeklyDistribution, distribution }) => {
 
       {/* STAT CARDS */}
       <section className="grid grid-cols-3 gap-20 mb-6">
-        <article className="p-3 border border-white rounded-2xl shadow flex flex-col items-center">
+        <article className="p-3 border border-white rounded-2xl shadow flex flex-col items-center  bg-[#121624] opacity-80 ">
           <FaUsers size={40} className="text-blue-400 mb-2" />
           <p className="text-2xl font-bold">{data.totalStudents}</p>
           <p className="text-gray-400 text-sm">Total Students</p>
         </article>
 
-        <article className="p-3 border border-white rounded-2xl shadow flex flex-col items-center">
+        <article className="p-3 border border-white rounded-2xl shadow flex flex-col items-center  bg-[#121624] opacity-80 ">
           <MdQrCodeScanner size={40} className="text-blue-400 mb-2" />
           <p className="text-2xl font-bold">{data.scansToday}</p>
           <p className="text-gray-400 text-sm">Scans Today</p>
         </article>
 
-        <article className="p-3 border border-white rounded-2xl shadow flex flex-col items-center">
+        <article className="p-3 border border-white rounded-2xl shadow flex flex-col items-center  bg-[#121624] opacity-80 ">
           <MdOutlineAccessTimeFilled size={40} className="text-red-400 mb-2" />
           <p className="text-2xl font-bold">{data.pendingIssues}</p>
           <p className="text-gray-400 text-sm">Pending Issues</p>
@@ -47,9 +48,9 @@ const Layout = ({ data, weeklyDistribution, distribution }) => {
 
       {/* SPECIAL EVENT */}
       <section className="bg-[#0f1322] flex justify-center mb-8 p-7 border-gray-400">
-        <div className="px-20 py-10 rounded-4xl border-gray-400 shadow-[0_0_5px_-2px_white]">
+        <div className="px-20 py-10 rounded-4xl border-gray-400 shadow-[0_0_5px_-2px_white]  bg-[#121624] ">
           <button
-            onClick={() => navigate('/SpecialAttendance')}
+            onClick={() => navigate('/attendance/create')}
             className="bg-white text-black font-bold text-2xl inline-flex hover:bg-gray-400 active:bg-gray-700 px-8 py-3 rounded-2xl"
           >
             <MdEventAvailable size={75} className="text-black mr-4" />
@@ -59,13 +60,13 @@ const Layout = ({ data, weeklyDistribution, distribution }) => {
       </section>
 
       {/* WEEKLY TREND */}
-      <section className="bg-[#111827] rounded-2xl shadow p-4 px-14 mb-20 border border-white">
-        <div className="flex justify-between items-center mb-4">
+      <section className="bg-[#111827] rounded-2xl shadow p-8 px-14 mb-20 border border-white">
+        <div className="flex justify-between items-center mb-4 bg-[#121624] ">
           <h2 className="font-semibold">Weekly Attendance Trend</h2>
           <button className="text-gray-400 font-semibold">View Report</button>
         </div>
 
-        <div className="flex justify-center items-center border border-white rounded-2xl text-gray-500">
+        <div className="flex justify-center items-center border border-white mb-5 rounded-2xl text-gray-500">
           <div className="w-11/12 h-72 justify-center">
             <ResponsiveContainer>
               <LineChart data={weeklyDistribution}>
@@ -87,32 +88,38 @@ const Layout = ({ data, weeklyDistribution, distribution }) => {
       </section>
 
       {/* FACULTY DISTRIBUTION */}
-      <section className="bg-[#111827] rounded-2xl shadow p-4 px-14 mb-20 border border-white">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="font-semibold">Faculty Distribution</h2>
-          <button className="text-gray-400 font-semibold">View Details</button>
-        </div>
+      <section className="bg-[#111827] rounded-2xl shadow p-8 px-14 mb-20 border border-white">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="font-semibold">Faculty Distribution</h2>
+        <button className="text-gray-400 font-semibold">View Details</button>
+      </div>
 
-        <div className="flex justify-center items-center h-80 border border-white rounded-2xl text-gray-500">
-          <PieChart width={600} height={320}>
-            <Pie
-              data={distribution}
-              dataKey="studentCount"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              label
-            >
-              {distribution.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </div>
-      </section>
+      <div className="flex justify-center items-center h-80 border mb-5 border-white rounded-2xl text-gray-500">
+        <PieChart width={600} height={320}>
+          <Pie
+            data={distribution}
+            dataKey="studentCount"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            outerRadius={100}
+            label
+            onMouseEnter={(_, index) => setActiveIndex(index)}
+            onMouseLeave={() => setActiveIndex(null)}
+          >
+            {distribution.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+                fillOpacity={activeIndex === index ? 1 : 0.6}
+              />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </div>
+    </section>
 
       {/* RECENT ACTIVITY */}
       <section className="bg-[#111827] rounded-2xl border border-white shadow p-4">

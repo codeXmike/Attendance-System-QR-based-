@@ -7,6 +7,10 @@ import AdminDashboard from "../pages/admins/AdminDasboard";
 import LecturerDashboard from "../pages/lecturers/Dashboard";
 import SpecialAttendace from "../pages/admins/super/SpecialAttendance";
 import StudentDashboard from "../pages/students/Dashboard";
+import AttendanceRecord from "../pages/AttendanceRecord";
+import ScanPage from "../pages/AttendanceScan";
+import LecturerManagement from "../pages/admins/super/LecturerManagement";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -21,8 +25,20 @@ const router = createBrowserRouter([
     element: <AdminDashboard />,
   },
   {
-    path: "/admin/special",
+    path: "/attendance/create",
     element: <SpecialAttendace />,
+  },
+  {
+    path: "/attendance/records",
+    element: <AttendanceRecord />,
+  },
+  {
+    path: "/attendance/scan",
+    element: <ScanPage />,
+  },
+  {
+    path: "/manage/lecturers",
+    element: <LecturerManagement />,
   },
   {
     path: "/lecturer/dashboard",
