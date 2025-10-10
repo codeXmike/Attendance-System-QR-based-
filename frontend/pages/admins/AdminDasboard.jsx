@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Layout from '../../layouts/Layout';
 import Sidebar from '../../layouts/Sidebar';
 import "./dashboard-data (1)"
 import { roleBasedDashboardData } from './dashboard-data (1)';
+import { useAuth } from '../../context/AuthContext';
 const AdminDashboard = () => {
+    const admin = useAuth()
+    console.log("Role", admin)
     const [loggedAdmin, setLoggedAdmin] = useState({role: "super"})
     const roleDict = {
         "super": {

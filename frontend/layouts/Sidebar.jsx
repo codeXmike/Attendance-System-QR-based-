@@ -63,8 +63,8 @@ function Sidebar({Title, faculties, distribution}) {
         </button>
         {openDropdown === "attendance" && (
           <div className="ml-20 pl-4 mt-1 space-y-1 max-h-[60px] overflow-y-auto custom-scroll  border-l-4 rounded-bl-lg">
-            <button className="block hover:bg-gray-700 rounded-lg px-2 hover:text-cyan-300">Attendance Records</button>
-            <button className="block hover:bg-gray-700 rounded-lg px-2 hover:text-cyan-300" onClick={()=>navigate('/admin/special')}>Take Attendance</button>
+            <button className="block hover:bg-gray-700 rounded-lg px-2 hover:text-cyan-300" onClick={()=>navigate('/attendance/records')}>Attendance Records</button>
+            <button className="block hover:bg-gray-700 rounded-lg px-2 hover:text-cyan-300" onClick={()=>navigate('/attendance/create')}>Take Attendance</button>
           </div>
         )}
       </div>

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import Login from "../pages/Login";
 import AdminDashboard from "../pages/admins/AdminDasboard";
 import LecturerDashboard from "../pages/lecturers/Dashboard";
-import SpecialAttendace from "../pages/admins/super/SpecialAttendance";
+import CreateAttendance from "../pages/CreateAttendance";
 import StudentDashboard from "../pages/students/Dashboard";
 import AttendanceRecord from "../pages/AttendanceRecord";
 import ScanPage from "../pages/AttendanceScan";
@@ -26,7 +26,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/attendance/create",
-    element: <SpecialAttendace />,
+    element: <CreateAttendance />,
   },
   {
     path: "/attendance/records",

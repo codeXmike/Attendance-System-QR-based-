@@ -2,7 +2,7 @@ import react from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function SpecialAttendace() {
+function CreateAttendance() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     eventName: "",
@@ -127,4 +127,4 @@ function SpecialAttendace() {
     </div>
   );
 }
-export default SpecialAttendace
+export default CreateAttendance
