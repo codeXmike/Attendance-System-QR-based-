@@ -1,18 +1,38 @@
 
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "./login.css";
 
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState("")
+    const { login } = useAuth();
+    const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // TODO: Implement authentication logic here
-        alert(`Email: ${email}\nPassword: ${password}`);
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    
+
+    try {
+      setLoading(true)
+      const result = await login({ email, password, userType:"admin" });
+      console.log("Login result:", result);
+      if (result.success) {
+        navigate("/admin/dashboard");
+      } else {
+        setError(result.message);
+      }
+      setLoading(false)
+    } catch (err) {
+      setError("Login failed. Please try again.");
+    }
+  };
 
     return (
         <div className="main">

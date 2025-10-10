@@ -1,6 +1,6 @@
-import Lecturer from "../models/Lecturer";
-import Students from "../models/Students";
-import Admins from "../models/Admins";
+import Lecturer from "../models/Lecturer.js";
+import Students from "../models/Students.js";
+import Admins from "../models/Admins.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
