@@ -2,23 +2,47 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useEffect } from "react";
 
-import LecturerLogin from "../pages/lecturers/Login";
+import Login from "../pages/Login";
+import AdminDashboard from "../pages/admins/AdminDasboard";
 import LecturerDashboard from "../pages/lecturers/Dashboard";
+import CreateAttendance from "../pages/CreateAttendance";
 import StudentDashboard from "../pages/students/Dashboard";
-import StudentLogin from "../pages/students/Login";
+import AttendanceRecord from "../pages/AttendanceRecord";
+import ScanPage from "../pages/AttendanceScan";
+import LecturerManagement from "../pages/admins/super/LecturerManagement";
 
 const router = createBrowserRouter([
   {
-    path: "/lecturer/login",
-    element: <LecturerLogin />,
+    path: "/",
+    element: <Login />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/admin/dashboard",
+    element: <AdminDashboard />,
+  },
+  {
+    path: "/attendance/create",
+    element: <CreateAttendance />,
+  },
+  {
+    path: "/attendance/records",
+    element: <AttendanceRecord />,
+  },
+  {
+    path: "/attendance/scan",
+    element: <ScanPage />,
+  },
+  {
+    path: "/manage/lecturers",
+    element: <LecturerManagement />,
   },
   {
     path: "/lecturer/dashboard",
     element: <LecturerDashboard />,
-  },
-  {
-    path: "/student/login",
-    element: <StudentLogin />,
   },
   {
     path: "/student/dashboard",

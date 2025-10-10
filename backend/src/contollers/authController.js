@@ -1,5 +1,6 @@
 import { loginAdmin, loginLecturer, loginStudent } from "../services/authServices.js";
 
+
 // Login controller for all user types
 export const login = async (req, res) => {
   const { userType } = req.body; // 'admin', 'lecturer', or 'student'

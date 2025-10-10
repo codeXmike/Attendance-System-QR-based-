@@ -1,0 +1,44 @@
+@tailwind utilities;
+
+
+@layer utilities {
+  .custom-scroll::-webkit-scrollbar {
+    width: 4px;               
+  }
+  .custom-scroll::-webkit-scrollbar-track {
+    background: #6b7280;        
+  }
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background: #000;       
+    border-radius: 9999px;
+    height: 5px;      
+  }
+  .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;       
+  }
+
+  .custom-scroll {
+    scrollbar-width: thin;             
+    scrollbar-color: #9ca3af #0f1322 ;   
+  }
+  
+}
+
+@layer utilities {
+  @keyframes marquee {
+    0%   { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  .marquee {
+    overflow: hidden;       /* hide overflow */
+    white-space: nowrap;    /* keep text on one line */
+    position: relative;
+  }
+
+  .marquee span {
+    display: inline-block;
+    padding-left: 100%;     /* start off-screen */
+    animation: marquee 8s linear infinite;
+  }
+}

@@ -23,7 +23,7 @@ export const getAllSessions = async (req, res) => {
 
 // Get session by ID
 export const getSessionById = async (req, res) => {
-  try {
+  try { 
     const session = await sessionService.getSessionById(req.params.id);
     if (!session) return res.status(404).json({ message: "Session not found" });
     res.status(200).json(session);
