@@ -49,6 +49,7 @@ app.use('/api/reports', reportsAnalyticsRoutes);
 app.use('/api/utilities', utilitiesRoutes);
 app.use('/api/manage', departmentFacultyRoutes);
 
+
 app.get('/', (req, res) => {
     res.send('University Attendance System API is running');
 });
