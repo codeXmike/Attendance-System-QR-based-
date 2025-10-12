@@ -1,25 +1,19 @@
 import { loginAdmin, loginLecturer, loginStudent } from "../services/authServices.js";
 
 
-// Login controller for all user types
+import { loginService } from "../services/authServices.js";
+
 export const login = async (req, res) => {
-  const { userType } = req.body; // 'admin', 'lecturer', or 'student'
   try {
-    let result;
-    if (userType === "admin") {
-      result = await loginAdmin(req.body);
-    } else if (userType === "lecturer") {
-      result = await loginLecturer(req.body);
-    } else if (userType === "student") {
-      result = await loginStudent(req.body);
-    } else {
-      return res.status(400).json({ error: "Invalid user type" });
-    }
+    const result = await loginService(req.body);
     res.json(result);
   } catch (err) {
+    console.error("Login error:", err.message);
     res.status(401).json({ error: err.message });
   }
 };
+
+
 
 // Logout controller (stateless JWT, just a placeholder)
 export const logout = async (req, res) => {

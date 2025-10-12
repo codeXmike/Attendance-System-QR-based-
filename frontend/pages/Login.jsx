@@ -7,7 +7,7 @@ import "./login.css";
 
 
 function Login() {
-    const [email, setEmail] = useState("");
+    const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState("")
@@ -21,10 +21,14 @@ function Login() {
 
     try {
       setLoading(true)
-      const result = await login({ email, password, userType:"admin" });
+      const result = await login({ identifier, password});
+      const role = result.role;
       console.log("Login result:", result);
       if (result.success) {
-        navigate("/admin/dashboard");
+        if (role === "admin") navigate("/admin/dashboard");
+        else if (role === "lecturer") navigate("/lecturer/dashboard");
+        else navigate("/student/dashboard");
+
       } else {
         setError(result.message);
       }
@@ -43,8 +47,8 @@ function Login() {
                     <input   
                         type="email"
                         placeholder="Email/Matric No."
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        value={identifier}
+                        onChange={e => setIdentifier(e.target.value)}
                         required
                     />
                     <input

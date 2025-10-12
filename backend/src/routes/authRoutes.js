@@ -1,11 +1,10 @@
 import express from 'express';
-import { login } from '../contollers/authController';
+import { login } from '../contollers/authController.js';
 
 const router = express.Router();
 
-router.post('/login', (req, res) => {
-  res.json({ message: 'Login route hit' });
-});
+
+router.post('/login', login);
 router.post('/logout', (req, res) => {
   res.json({ message: 'Logout route hit' });
 });

@@ -15,6 +15,11 @@ export const AuthProvider = ({ children }) => {
     console.log(storedUser)
     return storedUser ? JSON.parse(storedUser) : null;
   });
+  const [role, setRole] = useState(() => {
+    const storedRole = localStorage.getItem("role");
+    console.log(storedRole)
+    return storedRole ? JSON.parse(storedRole) : null;
+  });
 
   const [loading, setLoading] = useState(false);
 
@@ -26,22 +31,26 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+
   const login = async (credentials) => {
     setLoading(true);
     try {
       const res = await api.post("/auth/login", credentials);
       console.log("The DATA", res.data)
-      const { admin, token } = res.data;
-      localStorage.setItem("user", JSON.stringify(admin));
+      const { user, token, role } = res.data;
+      localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
+      localStorage.setItem("role", JSON.stringify(role));
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      setUser(admin);
-      return { success: true };
+      setUser(user);
+      setRole(role);
+      return { success: true, role };
     } catch (err) {
       return {
         success: false,
         message: err.response?.data?.message || "Login failed",
       };
+
     } finally {
       setLoading(false);
     }
@@ -52,12 +61,13 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("role");
     localStorage.removeItem("token");
     delete api.defaults.headers.common["Authorization"];
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, role, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

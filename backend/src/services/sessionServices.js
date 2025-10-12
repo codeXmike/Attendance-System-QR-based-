@@ -1,9 +1,9 @@
 import Sessions from "../models/Sessions";
 
 export const createSession = async(data) => {
+  console.log("Creating session with data:", data);
     return await Sessions.create(data);
 };
-
 export const getAllSessions = async() => {
     return await Sessions.find({});
 };
