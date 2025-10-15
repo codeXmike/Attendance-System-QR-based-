@@ -6,8 +6,7 @@ const attendanceSessionSchema = new mongoose.Schema({
   session_type: { type: String, enum: ["Lecture", "Event", "Hostel"], required: true },
   started_at: { type: Date, default: Date.now },
   ended_at: { type: Date },
-  created_by: { type: mongoose.Schema.Types.ObjectId, required: true, refPath: "created_by_model" },
-  created_by_model: { type: String, required: true, enum: ["Lecturer", "Admin"] },
+  created_by: { type: mongoose.Schema.Types.ObjectId, required: true},
   status: { type: String, enum: ["in-progress", "closed"], default: "in-progress" },
   metadata: { type: Object, default: {} }, // ✅ add this
   records: [

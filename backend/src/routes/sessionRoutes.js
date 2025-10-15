@@ -1,10 +1,9 @@
 import express from 'express';
+import { createSessions, endSessions } from '../contollers/sessionController.js';
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  res.json({ message: 'Create a session' });
-});
+router.post('/', createSessions);
 router.get('/:id', (req, res) => {
   res.json({ message: `Get session ${req.params.id}` });
 });
@@ -14,6 +13,7 @@ router.get('/course/:id', (req, res) => {
 router.put('/:id', (req, res) => {
   res.json({ message: `Update session ${req.params.id}` });
 });
+router.put('/:id/end', endSessions);
 router.delete('/:id', (req, res) => {
   res.json({ message: `Delete session ${req.params.id}` });
 });

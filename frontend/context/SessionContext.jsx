@@ -9,21 +9,28 @@ const api = axios.create({
   withCredentials: true,
 });
 export function SessionProvider({ children }) {
-  const [sessions, setSessions] = useState([]);
+  const [session, setSession] = useState([]);
 
   const createSession = async (data) => {
     const res = await api.post("/sessions", data);
-    setSessions((prev) => [...prev, res.data]);
+    setSession(res.data);
     return res.data;
   };
+  
+  const endSession = async (sessionId, data) => {
+  const res = await api.put(`/sessions/${sessionId}/end`, data);
+  setSession(res.data);
+  return res.data;
+};
+
 
   const getSessions = async () => {
     const res = await api.get("/sessions");
-    setSessions(res.data);
+    setSession(res.data);
   };
 
   return (
-    <SessionContext.Provider value={{ sessions, createSession, getSessions }}>
+    <SessionContext.Provider value={{ session, createSession, endSession, getSessions }}>
       {children}
     </SessionContext.Provider>
   );

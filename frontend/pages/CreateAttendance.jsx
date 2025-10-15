@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "../context/SessionContext";
 import { useAuth } from "../context/AuthContext"; // assuming you store user info here
+import capitalizeFirstLetter from "../utils/Capitalizer";
 
 function CreateAttendance() {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ function CreateAttendance() {
       session_name: formData.session_name,
       session_type: "Event",
       created_by: user?._id,
-      created_by_model: user?.role === "admin" ? "Admin" : "Lecturer",
+      created_by_model: capitalizeFirstLetter(user?.role),
       metadata: {
         location: formData.location,
         audience: formData.audience,
