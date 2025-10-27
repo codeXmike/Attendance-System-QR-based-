@@ -1,6 +1,6 @@
 // src/router.jsx
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useEffect } from "react";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import Login from "../pages/Login";
 import AdminDashboard from "../pages/admins/AdminDasboard";
@@ -10,11 +10,18 @@ import StudentDashboard from "../pages/students/Dashboard";
 import AttendanceRecord from "../pages/AttendanceRecord";
 import ScanPage from "../pages/AttendanceScan";
 import LecturerManagement from "../pages/admins/super/LecturerManagement";
+import { MainDashboard } from "../pages/MainDashboard";
 
-const router = createBrowserRouter([
+const PrivateRoute = ({ children }) => {
+    const token = localStorage.getItem("token");
+    return token ? children : <Navigate to="/login" />;
+  };
+
+  const role = JSON.parse(localStorage.getItem("role") || "null");
+  const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />,
+    element: (<PrivateRoute><MainDashboard role={role} /></PrivateRoute>),
   },
   {
     path: "/login",
@@ -22,19 +29,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin/dashboard",
-    element: <AdminDashboard />,
+    element: (<PrivateRoute><AdminDashboard /></PrivateRoute>),
   },
   {
     path: "/attendance/create",
-    element: <CreateAttendance />,
+    element: (<PrivateRoute><CreateAttendance /></PrivateRoute>),
   },
   {
     path: "/attendance/records",
-    element: <AttendanceRecord />,
+    element: (<PrivateRoute><AttendanceRecord /></PrivateRoute>),
   },
   {
     path: "/attendance/scan",
-    element: <ScanPage />,
+    element: (<PrivateRoute><ScanPage /></PrivateRoute>),
   },
   {
     path: "/manage/lecturers",

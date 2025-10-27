@@ -1,8 +1,20 @@
-import Sessions from "../models/Sessions";
+import Sessions from "../models/Sessions.js";
 
 export const createSession = async(data) => {
   console.log("Creating session with data:", data);
     return await Sessions.create(data);
+};
+export const endSession = async(id, data) => {
+  console.log("Ending session with data:", data);
+    const session = await Sessions.findById(id);
+    if (!session) throw new Error("Session not found");
+    if (!session.status || session.status !== 'in-progress') throw new Error("Session is not active or already ended");
+    session.ended_at = new Date();
+    session.records = data; // Assuming data contains the attendance records
+    session.status = 'closed';
+
+    await session.save();
+    return session;
 };
 export const getAllSessions = async() => {
     return await Sessions.find({});

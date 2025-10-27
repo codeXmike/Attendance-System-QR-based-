@@ -6,14 +6,13 @@ const attendanceSessionSchema = new mongoose.Schema({
   session_type: { type: String, enum: ["Lecture", "Event", "Hostel"], required: true },
   started_at: { type: Date, default: Date.now },
   ended_at: { type: Date },
-  created_by: { type: mongoose.Schema.Types.ObjectId, required: true, refPath: "created_by_model" },
-  created_by_model: { type: String, required: true, enum: ["Lecturer", "Admin"] },
+  created_by: { type: mongoose.Schema.Types.ObjectId, required: true},
   status: { type: String, enum: ["in-progress", "closed"], default: "in-progress" },
   metadata: { type: Object, default: {} }, // ✅ add this
   records: [
     {
-      student: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
-      status: { type: String, enum: ["Present", "Absent"], default: "Present" },
+      student_id: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
+      status: { type: String, enum: ["Present", "Absent", "Duplicate"], default: "Present" },
       recorded_at: { type: Date, default: Date.now },
       scan_method: { type: String, enum: ["Phone Cam", "2D Scanner", "Manual"], default: "2D Scanner" },
       metadata: { type: Object, default: {} },
