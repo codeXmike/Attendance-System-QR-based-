@@ -24,7 +24,7 @@ export const endSessions = async (req, res) => {
 };
 
 // Get all sessions
-export const getAllSessionsf = async (req, res) => {
+export const getSessions = async (req, res) => {
   try {
     const sessions = await getAllSessions();
     res.status(200).json(sessions);

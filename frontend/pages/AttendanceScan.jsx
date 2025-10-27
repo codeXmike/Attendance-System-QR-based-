@@ -1,85 +1,129 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Trash2, Usb } from "lucide-react";
 import { useSession } from "../context/SessionContext";
-import { useState } from "react";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 const ScanPage = () => {
   const navigate = useNavigate();
-  const {session, endSession} = useSession()
+  const { session, endSession, scanStudent } = useSession();
+  const [students, setStudents] = useState([]);
 
-  console.log("Session",session)
-  console.log("Session ID",session._id)
-  const [students, setStudents] = useState([
-  {
-    student: {
-      _id: "66fc19a9d8b2a1e3b5dca111",
-      name: "Adaeze N.",
-      matric: "GOU/U24/CSC/1267",
-    },
-    status: "Present",
-    recorded_at: "2025-10-15T10:02:00.000Z",
-    scan_method: "2D Scanner",
-    metadata: { location: "Main Gate", device_id: "SCN-01" },
-  },
-  {
-    student: {
-      _id: "66fc19a9d8b2a1e3b5dca112",
-      name: "Kelechi A.",
-      matric: "GOU/U24/CSC/1267",
-    },
-    status: "Present",
-    recorded_at: "2025-10-15T10:03:00.000Z",
-    scan_method: "Phone Cam",
-    metadata: { location: "Convocation Arena", device_id: "MOB-23" },
-  },
-  {
-    student: {
-      _id: "66fc19a9d8b2a1e3b5dca113",
-      name: "Michael E.",
-      matric: "GOU/U24/CSC/1267",
-    },
-    status: "Present",
-    recorded_at: "2025-10-15T10:04:00.000Z",
-    scan_method: "2D Scanner",
-    metadata: { location: "Arena Gate A", device_id: "SCN-02" },
-  },
-  {
-    student: {
-      _id: "66fc19a9d8b2a1e3b5dca114",
-      name: "John M.",
-      matric: "GOU/U24/CSC/1267",
-    },
-    status: "Present",
-    recorded_at: "2025-10-15T10:05:00.000Z",
-    scan_method: "Manual",
-    metadata: { location: "Side Entrance", device_id: "MNL-04" },
-  },
-])
-  const handleSubmit = async ()=>{
-    await endSession(session._id, students)
-    navigate("/attendance/records")
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (!session) {
+      navigate("/"); // redirect if no session
+    }
+  }, [session, navigate]);
+
+  useEffect(() => {
+    const keepFocus = () => {
+      if (inputRef.current && document.activeElement !== inputRef.current) {
+        inputRef.current.focus();
+      }
+    };
+    keepFocus();
+    window.addEventListener("focus", keepFocus);
+    const interval = setInterval(keepFocus, 500);
+    return () => {
+      window.removeEventListener("focus", keepFocus);
+      clearInterval(interval);
+    };
+  }, []);
+
+
+const decryptPayload = async (payload) => {
+  try {
+    const res = await scanStudent(payload);
+    console.log(res);
+    if (!res.status == 200) throw new Error("Failed to decrypt");
+    const data = await res.data;
+    console.log("Data", data)
+    return {
+      student: data,
+      student_id: data.student_id,
+      status: "Present",
+      recorded_at: new Date().toISOString(),
+      scan_method: "2D Scanner",
+      metadata: { location: "Main Gate", device_id: "SCN-01" },
+    };
+  } catch (err) {
+    console.error(err);
+    return null;
   }
-  const handleDelete = async (key)=>{
-    students.splice(key,1)
-    setStudents([...students])
+};
+
+  useEffect(() => {
+  if (!session) return;
+
+  const simulatedPayloads = [
+    { ciphertext: "vE9n2RWva2ChRBpeZU3qkQ==", iv: "Ag2yydZETn5j163u", authTag: "HBdg7bMpgk+GIJqFgognnw==" },
+    { ciphertext: "A08DegSFINfH+n2UCfm3Nw==", iv: "sXxp+xzANW5lWUPy", authTag: "gHzo/APegxoGqwsx5zTmVA==" },
+  ];
+
+  simulatedPayloads.forEach((payload, i) => {
+    setTimeout(async () => {
+      const id = Date.now() + i;
+      setStudents(prev => [
+        ...prev,
+        { id, decrypting: true, cipher: payload.ciphertext, iv: payload.iv },
+      ]);
+
+      const data = await decryptPayload(payload);
+      if (!data) return;
+
+      setStudents(prev =>
+        prev.map(s =>
+          s.id === id ? { ...s, ...data, decrypting: false } : s
+        )
+      );
+    }, i * 1250);
+
+  });
+}, [session]);
+
+
+  const handleDelete = (key) => {
+    const copy = [...students];
+    copy.splice(key, 1);
+    setStudents(copy);
+  };
+
+  const handleSubmit = async () => {
+    if (!session) return;
+    await endSession(session._id, students);
+    navigate("/attendance/records");
+  };
+
+  // 🔹 Conditional rendering: show nothing or loader until session loads
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-[#0d1117] text-white flex items-center justify-center">
+        <p className="text-gray-400 text-lg">
+          No active session. Redirecting...
+        </p>
+      </div>
+    );
   }
-  const handleScan = async ()=>{
-    await endSession()
-    
-  }
+
   return (
-    <div className="min-h-screen bg-[#0d1117] text-white px-10 py-10 font-[Inter]">
-      {/* Header */}
+    <div className="min-h-screen bg-[#0d1117] text-white px-10 py-10 font-[Inter] relative">
+      <input
+        ref={inputRef}
+        type="text"
+        className="absolute opacity-0 pointer-events-none"
+        autoFocus
+      />
+
       <h1 className="text-3xl font-semibold mb-2">
         <span className="text-white">Scan</span>{" "}
         <span className="text-gray-400 text-2xl">
-          – CS101 • Intro to Software Eng • 11 Sep 2025 • Lecture Hall A
+          – {session.session_name} • {session.session_type}
         </span>
       </h1>
 
       <div className="flex flex-row md:flex-row gap-8 mt-10">
-        {/* Left: Ongoing Attendance */}
+        {/* Left Panel */}
         <div className="flex-1 bg-[#111827] border border-[#1f2937] rounded-2xl p-6 shadow">
           <h2 className="font-semibold mb-5 text-white">Ongoing Attendance</h2>
           <div className="flex justify-center items-center bg-black/60 rounded-lg h-72 border border-[#1f2937] flex-col">
@@ -90,21 +134,30 @@ const ScanPage = () => {
           </div>
 
           <div className="flex justify-between mt-8">
-            <button className="px-6 py-2 rounded-full border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white transition">
+            <button
+              className="px-6 py-2 rounded-full border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white transition"
+              onClick={() => navigate("/sessions")}
+            >
               Cancel
             </button>
-            <button className="px-6 py-2 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 font-medium transition" onClick={handleSubmit}>
+            <button
+              onClick={handleSubmit}
+              className="px-6 py-2 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 font-medium transition"
+            >
               Finish & Submit
             </button>
           </div>
         </div>
 
-        {/* Right: Live Attendance */}
+        {/* Right Panel */}
         <div className="flex-[1.5] bg-[#111827] border border-[#1f2937] rounded-2xl p-6 shadow">
           <div className="flex justify-between items-center mb-5">
             <h2 className="font-semibold text-white">Live Attendance</h2>
             <span className="text-gray-400 text-sm">
-              Scanned: <span className="text-white font-semibold">0</span>
+              Scanned:{" "}
+              <span className="text-white font-semibold">
+                {students.length}
+              </span>
             </span>
           </div>
 
@@ -125,25 +178,50 @@ const ScanPage = () => {
             <tbody>
               {students.map((s, index) => (
                 <tr
-                  key={s.student._id}
+                  key={index}
                   className="border-b border-gray-800 last:border-none text-gray-200"
                 >
                   <td className="py-3">{index + 1}.</td>
-                  <td className="py-3">{s.student.name}</td>
-                  <td className="py-3">{s.student.matric}</td>
-                  <td className="py-3 flex items-center gap-2">
-                    {new Date(s.recorded_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                    <span className="h-2 w-2 bg-green-400 rounded-full"></span>
+                  <td className="py-3">
+                    {s.decrypting ? (
+                      <span className="text-gray-500 italic">
+                        Decrypting...
+                      </span>
+                    ) : (
+                      s.student?.name
+                    )}
                   </td>
                   <td className="py-3">
-                    <button className="text-gray-400 hover:text-red-400 transition" onClick={()=>handleDelete(index)}>
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    {s.decrypting ? (
+                      <span className="text-gray-500 italic">---</span>
+                    ) : (
+                      s.student?.matricNo
+                    )}
+                  </td>
+                  <td className="py-3 flex items-center gap-2">
+                    {s.decrypting
+                      ? "..."
+                      : new Date(s.recorded_at).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                    {!s.decrypting && (
+                      <span className="h-2 w-2 bg-green-400 rounded-full"></span>
+                    )}
+                  </td>
+                  <td className="py-3">
+                    {!s.decrypting && (
+                      <button
+                        className="text-gray-400 hover:text-red-400 transition"
+                        onClick={() => handleDelete(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
             </tbody>
-
           </table>
 
           <div className="flex justify-end mt-6">

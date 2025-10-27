@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./login.css";
+import { useSession } from "../context/SessionContext";
 
 
 function Login() {
@@ -12,6 +13,7 @@ function Login() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState("")
     const { login } = useAuth();
+    const { session } = useSession();
     const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -25,9 +27,15 @@ function Login() {
       const role = result.role;
       console.log("Login result:", result);
       if (result.success) {
-        if (role === "admin") navigate("/admin/dashboard");
-        else if (role === "lecturer") navigate("/lecturer/dashboard");
-        else navigate("/student/dashboard");
+        if (session) {
+          navigate("/attendance/scan");
+          return;
+        }else{
+          if (role === "admin") navigate("/admin/dashboard");
+          else if (role === "lecturer") navigate("/lecturer/dashboard");
+          else navigate("/student/dashboard");
+        }
+        
 
       } else {
         setError(result.message);

@@ -11,8 +11,8 @@ const attendanceSessionSchema = new mongoose.Schema({
   metadata: { type: Object, default: {} }, // ✅ add this
   records: [
     {
-      student: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
-      status: { type: String, enum: ["Present", "Absent"], default: "Present" },
+      student_id: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
+      status: { type: String, enum: ["Present", "Absent", "Duplicate"], default: "Present" },
       recorded_at: { type: Date, default: Date.now },
       scan_method: { type: String, enum: ["Phone Cam", "2D Scanner", "Manual"], default: "2D Scanner" },
       metadata: { type: Object, default: {} },

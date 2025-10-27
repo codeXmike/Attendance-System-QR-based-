@@ -1,9 +1,10 @@
 import express from 'express';
 import { createSessions, endSessions } from '../contollers/sessionController.js';
-
+import { getSessions } from '../contollers/sessionController.js';
 const router = express.Router();
 
 router.post('/', createSessions);
+router.get('/', getSessions);
 router.get('/:id', (req, res) => {
   res.json({ message: `Get session ${req.params.id}` });
 });
